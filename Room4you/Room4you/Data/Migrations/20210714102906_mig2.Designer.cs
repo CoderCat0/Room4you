@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Room4you.Data;
 
 namespace Room4you.Data.Migrations
 {
     [DbContext(typeof(Proj_Context))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210714102906_mig2")]
+    partial class mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,14 +51,14 @@ namespace Room4you.Data.Migrations
                         new
                         {
                             Id = "c",
-                            ConcurrencyStamp = "88557f8e-73b1-4f65-8c76-c9e4138ea916",
+                            ConcurrencyStamp = "68d0697e-14dc-4083-8f05-6f4e507ca89e",
                             Name = "Cliente",
                             NormalizedName = "CLIENTE"
                         },
                         new
                         {
                             Id = "a",
-                            ConcurrencyStamp = "8881b232-e1c7-47df-aa1a-24589bdb0011",
+                            ConcurrencyStamp = "a98b0b76-4e8f-44de-a57f-5c160065f2c2",
                             Name = "Administrador",
                             NormalizedName = "ADMINISTRADOR"
                         });

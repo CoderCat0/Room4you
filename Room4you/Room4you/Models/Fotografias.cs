@@ -15,6 +15,12 @@ namespace Room4you.Models
         [Key]
         public int Id { get; set; }
 
+        /// <summary>
+        /// Nome do ficheiro com a fotografia do hotel
+        /// </summary>
+        public string Fotografia { get; set; }
+
+
         // criação da FK que referencia as fotos ao Hotel a que pertencem
         [ForeignKey(nameof(Hotel))]
         [Display(Name = "Hotel")]

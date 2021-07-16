@@ -9,6 +9,10 @@ namespace Room4you.Models
 {
     public class Hoteis
     {
+        public Hoteis()
+        {
+            ListaFotografias = new HashSet<Fotografias>();
+        }
         /// <summary>
         /// Id do Hotel
         /// </summary>
@@ -16,7 +20,12 @@ namespace Room4you.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Cidade onde se situa do Hotel
+        /// Nome do Hotel
+        /// </summary>
+        public string Nome { get; set; }
+
+        /// <summary>
+        /// País onde se situa do Hotel
         /// </summary>
         public string Pais { get; set; }
 
@@ -27,13 +36,13 @@ namespace Room4you.Models
         public string Cidade { get; set; }
 
         /// <summary>
-        /// Cidade onde se situa do Hotel
+        /// Rua onde se situa do Hotel
         /// </summary>
         public string Rua { get; set; }
 
 
         /// <summary>
-        /// Cidade onde se situa do Hotel
+        /// Classificação do Hotel
         /// </summary>
         public string Categoria { get; set; }
 
@@ -46,11 +55,9 @@ namespace Room4you.Models
         /*---------------------------------------------*/
 
         /// <summary>
-        /// FK para o ID do Quarto
+        /// lista de todas as fotografias de todos os hoteis
         /// </summary>
-        [ForeignKey(nameof(IdFoto))]
-        public int IdFotoFK { get; set; }
-        public Clientes IdFoto { get; set; }
+        public ICollection<Fotografias> ListaFotografias { get; set; }
 
     }
 }

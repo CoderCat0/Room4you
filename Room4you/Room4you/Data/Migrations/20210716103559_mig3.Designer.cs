@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Room4you.Data;
 
 namespace Room4you.Data.Migrations
 {
     [DbContext(typeof(Proj_Context))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210716103559_mig3")]
+    partial class mig3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
