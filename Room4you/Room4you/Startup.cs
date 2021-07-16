@@ -27,13 +27,30 @@ namespace Room4you
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // uso de vars. de sessão
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromSeconds(100);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            // definir qual a classe que representa a Base de Dados
+            // e especifica qual o motor (engine) que manipula a base de dados
+            // Especifica, também, onde está a definição da localização da Base de Dados - ver ficheiro 'appSettings.json'
             services.AddDbContext<Proj_Context>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<Proj_Context>();
+
+            // deixo de referir 'IdentityUser' e passo a usar 'ApplicationUser'
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+                          options.SignIn.RequireConfirmedAccount = true)
+                                 .AddRoles<IdentityRole>()  // ativa o uso de Roles
+                                 .AddEntityFrameworkStores<Proj_Context>();
             services.AddControllersWithViews();
         }
 
@@ -56,11 +73,13 @@ namespace Room4you
 
             app.UseRouting();
 
+            // permitir o uso de vars. de sessão
+            app.UseSession();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
+            app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

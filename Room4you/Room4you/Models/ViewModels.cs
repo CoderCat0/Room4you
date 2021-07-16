@@ -13,7 +13,6 @@ namespace Room4you.Models
         /// </summary>
         public class FotosHoteis
         {
-
             /// <summary>
             /// lista de todas as fotografias de todos os hoteis
             /// </summary>

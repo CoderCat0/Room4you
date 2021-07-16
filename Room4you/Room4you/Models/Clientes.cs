@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,11 @@ namespace Room4you.Models
 {
     public class Clientes
     {
+        public Clientes()
+        {
+            ListaCompras = new HashSet<Compras>();
+        }
+
         /// <summary>
         /// Id para o Cliente
         /// </summary>
@@ -22,6 +28,14 @@ namespace Room4you.Models
         public string Nome { get; set; }
 
         /// <summary>
+        /// Email do Cliente
+        /// </summary>
+        [Required(ErrorMessage = "O E-Mail é de preenchimento obrigatório")]
+        [RegularExpression("((((aluno)|(es((tt)|(ta)|(gt))))[0-9]{4,5})|([a-z]+(.[a-z]+)*))@ipt.pt",
+                           ErrorMessage = "Só são aceites emails do IPT.")]
+        public string Email { get; set; }
+
+        /// <summary>
         /// Nacionalidade do Cliente
         /// </summary>
         [Required(ErrorMessage = "A Nacionalidade é de preenchimento obrigatório")]
@@ -31,7 +45,7 @@ namespace Room4you.Models
         /// NIF do Cliente
         /// </summary>
         [Required(ErrorMessage = "O NIF é de preenchimento obrigatório")]
-        public int Nif { get; set; }
+        public string Nif { get; set; }
 
         /// <summary>
         /// Data de Nascimento do cliente
@@ -52,6 +66,18 @@ namespace Room4you.Models
         /// </summary>
         public string UserName { get; set; }
 
+        /// <summary>
+        /// lista de todas as fotografias de todos os hoteis
+        /// </summary>
+        public ICollection<Compras> ListaCompras { get; set; }
+
         // ############################################
+
+        // criação da FK que referencia o Cão a quem a Foto pertence
+        [ForeignKey(nameof(Compra))]
+        [Display(Name = "Compra")]
+        public int CompraFK { get; set; }
+        public Compras Compra { get; set; }
+
     }
 }

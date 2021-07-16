@@ -13,6 +13,7 @@ namespace Room4you.Models
         {
             ListaFotografias = new HashSet<Fotografias>();
         }
+
         /// <summary>
         /// Id do Hotel
         /// </summary>

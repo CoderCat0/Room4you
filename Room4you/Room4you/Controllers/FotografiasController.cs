@@ -79,17 +79,18 @@ namespace Room4you.Controllers
                               select f.Id)
                              .ToListAsync();
 
+            var hotel = await _context.Hoteis.Include(h => h.ListaFotografias).ToListAsync();
 
             // transportar os dois objetos para a View
             // iremos usar um ViewModel
-            var fotos = new FotosHoteis
-            {
-                ListaFotografias = fotografias,
-                ListaFotosHoteis = hoteis
-            };
+            //var fotos = new Hoteis
+            //{
+            //    ListaFotografias = fotografias,
+            //    ListaFotosHoteis = hoteis
+            //};
 
             // invoca a View, entregando-lhe a lista de registos das fotografias e hoteis
-            return View(fotos);
+            return View(hotel);
         }
 
         // GET: Fotografias/Details/5

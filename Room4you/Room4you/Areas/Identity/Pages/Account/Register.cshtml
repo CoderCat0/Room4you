@@ -1,0 +1,82 @@
+﻿@page
+@model RegisterModel
+@{
+   ViewData["Title"] = "Registar";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+
+<form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+
+
+
+   <div class="row">
+      @*<form asp-route-returnUrl="@Model.ReturnUrl" method="post">*@
+      <div class="col-md-4">
+
+         <h4>Criar uma nova conta.</h4>
+         <hr />
+         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+         <div class="form-group">
+            <label asp-for="Input.Email"></label>
+            <input asp-for="Input.Email" class="form-control" />
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+         </div>
+         <div class="form-group">
+            <label asp-for="Input.Password"></label>
+            <input asp-for="Input.Password" class="form-control" />
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+         </div>
+         <div class="form-group">
+            <label asp-for="Input.ConfirmPassword"></label>
+            <input asp-for="Input.ConfirmPassword" class="form-control" />
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+         </div>
+         <button type="submit" class="btn btn-primary">Registar</button>
+
+      </div>
+      <div class="col-md-6 col-md-offset-2">
+         @* Pedir ao novo utilizador que preencha os dados do criador *@
+         <p><b>recolha dos Dados do Criador</b></p>
+         <hr />
+         <div class="form-group">
+            <label asp-for="Input.Cliente.Nome" class="control-label"></label>
+            <input asp-for="Input.Cliente.Nome" class="form-control" />
+            <span asp-validation-for="Input.Cliente.Nome" class="text-danger"></span>
+         </div>
+         <div class="form-group">
+             <label asp-for="Input.Cliente.Nacionalidade" class="control-label"></label>
+             <select asp-for="Input.Cliente.Nacionalidade">
+                 <option value="POR">Portuguesa</option>
+                 <option value="ESP">Espanhola</option>
+                 <option value="ING">Inglesa</option>
+                 <option value="FRA">Francesa</option>
+                 <option value="ITA">Italiana</option>
+                 <option value="ALE">Alemã</option>
+             </select>
+             <span asp-validation-for="Input.Cliente.Nacionalidade" class="text-danger"></span>
+         </div>
+         <div class="form-group">
+            <label asp-for="Input.Cliente.Sexo" class="control-label"></label>
+            <select asp-for="Input.Cliente.Sexo">
+                <option value="MASCULINO">Masculino</option>
+                <option value="FEMININO">Feminino</option>
+                <option value="OUTROS">Outro</option>
+            </select>
+            <span asp-validation-for="Input.Cliente.Sexo" class="text-danger"></span>
+         </div>
+         <div class="form-group">
+            <label asp-for="Input.Cliente.DataNasc" class="control-label"></label>
+            <input asp-for="Input.Cliente.DataNasc" class="form-control" />
+            <span asp-validation-for="Input.Cliente.DataNasc" class="text-danger"></span>
+         </div>
+      </div>
+   </div>
+</form>
+
+
+@section Scripts {
+   <partial name="_ValidationScriptsPartial" />
+}
