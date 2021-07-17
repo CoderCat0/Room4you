@@ -11,10 +11,9 @@ namespace Room4you.Models
     {
         public Compras()
         {
+            // inicializar a lista 
             ListaComprasQuartos = new HashSet<QuartosCompra>();
         }
-
-        public ICollection<QuartosCompra> ListaComprasQuartos { get; set; }
 
         /// <summary>
         /// Id da Compra
@@ -37,11 +36,9 @@ namespace Room4you.Models
         public Clientes IdCliente { get; set; }
 
         /// <summary>
-        /// FK para o ID do Quarto
+        /// declarar a lista entre Compras e QuartosCompra
         /// </summary>
-        [ForeignKey(nameof(IdQuarto))]
-        public int IdQuartoFK { get; set; }
-        public Quartos IdQuarto { get; set; }
+        public ICollection<QuartosCompra> ListaComprasQuartos { get; set; }
 
     }
 }

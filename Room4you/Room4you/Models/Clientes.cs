@@ -11,6 +11,7 @@ namespace Room4you.Models
     {
         public Clientes()
         {
+            // inicializar a lista de Compras do Cliente
             ListaCompras = new HashSet<Compras>();
         }
 
@@ -45,6 +46,7 @@ namespace Room4you.Models
         /// NIF do Cliente
         /// </summary>
         [Required(ErrorMessage = "O NIF é de preenchimento obrigatório")]
+        [RegularExpression("[0-9]{9}", ErrorMessage = "Escreva um NIF válido (9 números no formato xxxxxxxxx)")]
         public string Nif { get; set; }
 
         /// <summary>
@@ -72,12 +74,5 @@ namespace Room4you.Models
         public ICollection<Compras> ListaCompras { get; set; }
 
         // ############################################
-
-        // criação da FK que referencia o Cão a quem a Foto pertence
-        [ForeignKey(nameof(Compra))]
-        [Display(Name = "Compra")]
-        public int CompraFK { get; set; }
-        public Compras Compra { get; set; }
-
     }
 }

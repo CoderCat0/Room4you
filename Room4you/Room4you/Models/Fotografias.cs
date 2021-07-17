@@ -18,7 +18,7 @@ namespace Room4you.Models
         /// <summary>
         /// Nome do ficheiro com a fotografia do hotel
         /// </summary>
-        public string Fotografia { get; set; }
+        public string Nome { get; set; }
 
 
         // criação da FK que referencia as fotos ao Hotel a que pertencem

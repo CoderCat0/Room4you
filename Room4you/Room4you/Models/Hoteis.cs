@@ -11,7 +11,9 @@ namespace Room4you.Models
     {
         public Hoteis()
         {
+            //inicializar as listas
             ListaFotografias = new HashSet<Fotografias>();
+            ListaQuartos = new HashSet<Quartos>();
         }
 
         /// <summary>
@@ -23,11 +25,13 @@ namespace Room4you.Models
         /// <summary>
         /// Nome do Hotel
         /// </summary>
+        [Display(Name = "Nome do Hotel")]
         public string Nome { get; set; }
 
         /// <summary>
         /// País onde se situa do Hotel
         /// </summary>
+        [Display(Name = "País")]
         public string Pais { get; set; }
 
 
@@ -45,12 +49,14 @@ namespace Room4you.Models
         /// <summary>
         /// Classificação do Hotel
         /// </summary>
-        public string Categoria { get; set; }
+        [RegularExpression("[0-9],[0-9]", ErrorMessage = "Introduza uma classificação no formato a,b")]
+        public double Categoria { get; set; }
 
 
         /// <summary>
         /// Numero de Quartos que o hotel tem
         /// </summary>
+        [Display(Name = "Número de Quartos")]
         public int NumQuartos { get; set; }
 
         /*---------------------------------------------*/
@@ -59,6 +65,11 @@ namespace Room4you.Models
         /// lista de todas as fotografias de todos os hoteis
         /// </summary>
         public ICollection<Fotografias> ListaFotografias { get; set; }
+
+        /// <summary>
+        /// lista de todos os Quartos
+        /// </summary>
+        public ICollection<Quartos> ListaQuartos { get; set; }
 
     }
 }

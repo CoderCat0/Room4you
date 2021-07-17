@@ -25,20 +25,22 @@ namespace Room4you.Models
         /// <summary>
         /// Area do Quarto
         /// </summary> 
-        public int Area { get; set; }
+        [Required]
+        public string Area { get; set; }
 
         /// <summary>
         /// Caractristicas do Quarto
         /// </summary>
+        [Required]
         public string Comodidades { get; set; }
 
         //****************************************
 
         // criação da FK que referencia o Hotel a quem o quarto pertence
-        [ForeignKey(nameof(Quarto))]
-        [Display(Name = "Quarto")]
-        public int QuartoFK { get; set; }
-        public Quartos Quarto { get; set; }
+        [ForeignKey(nameof(Hotel))]
+        [Display(Name = "Hotel")]
+        public int HotelFK { get; set; }
+        public Hoteis Hotel { get; set; }
 
     }
 }

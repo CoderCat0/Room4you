@@ -49,14 +49,14 @@ namespace Room4you.Data.Migrations
                         new
                         {
                             Id = "c",
-                            ConcurrencyStamp = "88557f8e-73b1-4f65-8c76-c9e4138ea916",
+                            ConcurrencyStamp = "c8e60be8-d46e-4ad6-9ab6-0fa281f1b28c",
                             Name = "Cliente",
                             NormalizedName = "CLIENTE"
                         },
                         new
                         {
                             Id = "a",
-                            ConcurrencyStamp = "8881b232-e1c7-47df-aa1a-24589bdb0011",
+                            ConcurrencyStamp = "c483589d-12ba-4630-8085-48a459295c3c",
                             Name = "Administrador",
                             NormalizedName = "ADMINISTRADOR"
                         });
@@ -248,12 +248,17 @@ namespace Room4you.Data.Migrations
                     b.Property<DateTime>("DataNasc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Nacionalidade")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Nif")
-                        .HasColumnType("int");
+                    b.Property<string>("Nif")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -285,14 +290,9 @@ namespace Room4you.Data.Migrations
                     b.Property<int>("IdClienteFK")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdQuartoFK")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("IdClienteFK");
-
-                    b.HasIndex("IdQuartoFK");
 
                     b.ToTable("Compras");
                 });
@@ -314,7 +314,7 @@ namespace Room4you.Data.Migrations
 
                     b.HasIndex("HotelFK");
 
-                    b.ToTable("Fotografias");
+                    b.ToTable("Nome");
                 });
 
             modelBuilder.Entity("Room4you.Models.Hoteis", b =>
@@ -339,10 +339,15 @@ namespace Room4you.Data.Migrations
                     b.Property<string>("Pais")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("QuartoFK")
+                        .HasColumnType("int");
+
                     b.Property<string>("Rua")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("QuartoFK");
 
                     b.ToTable("Hoteis");
                 });
@@ -453,20 +458,12 @@ namespace Room4you.Data.Migrations
             modelBuilder.Entity("Room4you.Models.Compras", b =>
                 {
                     b.HasOne("Room4you.Models.Clientes", "IdCliente")
-                        .WithMany()
+                        .WithMany("ListaCompras")
                         .HasForeignKey("IdClienteFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Room4you.Models.Quartos", "IdQuarto")
-                        .WithMany()
-                        .HasForeignKey("IdQuartoFK")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("IdCliente");
-
-                    b.Navigation("IdQuarto");
                 });
 
             modelBuilder.Entity("Room4you.Models.Fotografias", b =>
@@ -478,6 +475,17 @@ namespace Room4you.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Hotel");
+                });
+
+            modelBuilder.Entity("Room4you.Models.Hoteis", b =>
+                {
+                    b.HasOne("Room4you.Models.Quartos", "Quarto")
+                        .WithMany()
+                        .HasForeignKey("QuartoFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Quarto");
                 });
 
             modelBuilder.Entity("Room4you.Models.QuartosCompra", b =>
@@ -497,6 +505,11 @@ namespace Room4you.Data.Migrations
                     b.Navigation("IdCompra");
 
                     b.Navigation("IdQuarto");
+                });
+
+            modelBuilder.Entity("Room4you.Models.Clientes", b =>
+                {
+                    b.Navigation("ListaCompras");
                 });
 
             modelBuilder.Entity("Room4you.Models.Compras", b =>

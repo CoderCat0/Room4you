@@ -26,7 +26,7 @@ namespace Room4you.Data.Migrations
 
             migrationBuilder.AddColumn<string>(
                 name: "Fotografia",
-                table: "Fotografias",
+                table: "Nome",
                 type: "nvarchar(max)",
                 nullable: true);
 
@@ -53,7 +53,7 @@ namespace Room4you.Data.Migrations
 
             migrationBuilder.DropColumn(
                 name: "Fotografia",
-                table: "Fotografias");
+                table: "Nome");
 
             migrationBuilder.AddColumn<int>(
                 name: "IdFotoFK",

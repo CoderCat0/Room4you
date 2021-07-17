@@ -168,7 +168,7 @@ namespace Room4you.Data.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Fotografias_HotelFK",
-                table: "Fotografias",
+                table: "Nome",
                 column: "HotelFK");
 
             migrationBuilder.CreateIndex(
