@@ -95,7 +95,7 @@ namespace Room4you.Controllers
                 quartos.Comodidades = info;
                 quartos.Area = area;
 
-                if (listaFotos == null)
+                if (listaFotos.Count == 0)
                 {
                     //se não existe ficheiro
                     //adcicionar msg de erro
@@ -126,7 +126,7 @@ namespace Room4you.Controllers
                         {
                             //se foram adicionadas fotografias
                             //adcicionar msg de erro
-                            ModelState.AddModelError("", "Não foram adicionadas fotografias");
+                            ModelState.AddModelError("", "Os ficheiros adicionados não são válidos");
                             flagErro = false;
 
                         }
@@ -136,13 +136,14 @@ namespace Room4you.Controllers
                     try
                     {
                         _context.Add(hoteis);
-                        
+                        _context.Add(quartos);
+                        _context.Add(fotos);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
                     }
                     catch (Exception ex)
                     {
-                        ModelState.AddModelError("", "Ocorreu um erro...");
+                        ModelState.AddModelError("", ex.GetBaseException().ToString());
                     }
                 else
                 {
