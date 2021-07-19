@@ -45,9 +45,14 @@ namespace Room4you.Data
                new IdentityRole { Id = "a", Name = "Administrador", NormalizedName = "ADMINISTRADOR" }
                );
 
-            modelBuilder.Entity<Fotografias>().HasData(
-                new Fotografias { Id = 1, Nome = "h1.jpg", HotelFK = 1 }
+            modelBuilder.Entity<Hoteis>().HasData(
+                new Hoteis { Id = 1 , Nome = "Hotel Fantástico" , Pais = "Portugal", Cidade = "Lisboa", Categoria = 5, Rua = "Qualquer coisa", NumQuartos = 1 }
             );
+
+
+            //modelBuilder.Entity<Fotografias>().HasData(
+            //    new Fotografias { Id = 1, Nome = "h1.jpg", HotelFK = 1 }
+            //);
         }
 
 

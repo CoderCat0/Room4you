@@ -149,7 +149,7 @@ namespace Room4you.Areas.Identity.Pages.Account {
 
 
              // se se desejar associar o utilizador recem criado à role 'Administrador' 
-             await _userManager.AddToRoleAsync(user, "Administrador");
+             await _userManager.AddToRoleAsync(user, "Cliente");
 
                //*************************************************************
                // Vamos proceder à operação de guardar os dados do Cliente

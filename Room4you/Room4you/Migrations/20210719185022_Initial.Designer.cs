@@ -7,18 +7,18 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Room4you.Data;
 
-namespace Room4you.Data.Migrations
+namespace Room4you.Migrations
 {
     [DbContext(typeof(Proj_Context))]
-    [Migration("20210716153037_mig4")]
-    partial class mig4
+    [Migration("20210719185022_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -51,14 +51,14 @@ namespace Room4you.Data.Migrations
                         new
                         {
                             Id = "c",
-                            ConcurrencyStamp = "c8e60be8-d46e-4ad6-9ab6-0fa281f1b28c",
+                            ConcurrencyStamp = "ef581e79-983f-4dac-99e5-c42775228021",
                             Name = "Cliente",
                             NormalizedName = "CLIENTE"
                         },
                         new
                         {
                             Id = "a",
-                            ConcurrencyStamp = "c483589d-12ba-4630-8085-48a459295c3c",
+                            ConcurrencyStamp = "6553d688-e0e9-40bc-800e-b2b0141efe91",
                             Name = "Administrador",
                             NormalizedName = "ADMINISTRADOR"
                         });
@@ -306,11 +306,11 @@ namespace Room4you.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Fotografia")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("HotelFK")
                         .HasColumnType("int");
+
+                    b.Property<string>("Nome")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -326,8 +326,8 @@ namespace Room4you.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Categoria")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Categoria")
+                        .HasColumnType("int");
 
                     b.Property<string>("Cidade")
                         .HasColumnType("nvarchar(max)");
@@ -341,17 +341,24 @@ namespace Room4you.Data.Migrations
                     b.Property<string>("Pais")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("QuartoFK")
-                        .HasColumnType("int");
-
                     b.Property<string>("Rua")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuartoFK");
-
                     b.ToTable("Hoteis");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Categoria = 5,
+                            Cidade = "Lisboa",
+                            Nome = "Hotel Fantástico",
+                            NumQuartos = 1,
+                            Pais = "Portugal",
+                            Rua = "Qualquer coisa"
+                        });
                 });
 
             modelBuilder.Entity("Room4you.Models.Quartos", b =>
@@ -361,13 +368,23 @@ namespace Room4you.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Area")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Comodidades")
+                    b.Property<string>("Area")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Comodidades")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HotelFK")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Ocupado")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("HotelFK");
 
                     b.ToTable("Quartos");
                 });
@@ -479,15 +496,15 @@ namespace Room4you.Data.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("Room4you.Models.Hoteis", b =>
+            modelBuilder.Entity("Room4you.Models.Quartos", b =>
                 {
-                    b.HasOne("Room4you.Models.Quartos", "Quarto")
-                        .WithMany()
-                        .HasForeignKey("QuartoFK")
+                    b.HasOne("Room4you.Models.Hoteis", "Hotel")
+                        .WithMany("ListaQuartos")
+                        .HasForeignKey("HotelFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Quarto");
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("Room4you.Models.QuartosCompra", b =>
@@ -522,6 +539,8 @@ namespace Room4you.Data.Migrations
             modelBuilder.Entity("Room4you.Models.Hoteis", b =>
                 {
                     b.Navigation("ListaFotografias");
+
+                    b.Navigation("ListaQuartos");
                 });
 
             modelBuilder.Entity("Room4you.Models.Quartos", b =>

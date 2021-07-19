@@ -82,25 +82,26 @@ namespace Room4you.Controllers
         public async Task<IActionResult> Create([Bind("Nome,Pais,Cidade,Rua,Categoria,NumQuartos")] Hoteis hoteis, List<IFormFile> listaFotos, string area, string info)
         {
             //flag erro
-            bool flagErro = true;
-
+            bool flagErro = false;
+            
             string nomeImagem = "";
 
             if (ModelState.IsValid)
             {
                 //declarar variáveis
                 Quartos quartos = new Quartos();
-                Fotografias fotos = new Fotografias();
-                quartos.HotelFK = hoteis.Id;
+                quartos.Ocupado = false;
+                quartos.Hotel = hoteis;
                 quartos.Comodidades = info;
                 quartos.Area = area;
+                List<string> listaNomesFotoFinal = new List<string>();
 
                 if (listaFotos.Count == 0)
                 {
                     //se não existe ficheiro
                     //adcicionar msg de erro
                     ModelState.AddModelError("", "Não foram adicionadas fotografias");
-                    flagErro = false;
+                    flagErro = true;
                 }
                 else
                 {
@@ -109,36 +110,53 @@ namespace Room4you.Controllers
                         //confirmamos se o tipo de ficheiro está certo
                         if (i.ContentType == "image/jpeg" || i.ContentType == "image/png")
                         {
+                            Fotografias foto = new Fotografias();
                             //defenir novo nome da fotografia
                             Guid g;
                             g = Guid.NewGuid();
-                            nomeImagem = hoteis.Nome + "_" + g.ToString();
+                            nomeImagem = hoteis.Id + "_" + g.ToString();
+
                             //determinar a extensão do nome da imagem
                             string extensao = Path.GetExtension(i.FileName).ToLower();
+
                             // agora, consigo ter o nome final do ficheiro
                             nomeImagem = nomeImagem + extensao;
+
                             // associar este ficheiro aos dados da Fotografia do cão
-                            fotos.Nome = nomeImagem;
+                            foto.Nome = nomeImagem;
+                            //foto.HotelFK = hoteis.Id;
+                            hoteis.ListaFotografias.Add(foto);
                             string localizacaoFicheiro = _caminho.WebRootPath;
                             nomeImagem = Path.Combine(localizacaoFicheiro, "fotos", nomeImagem);
+
+                            listaNomesFotoFinal.Add(nomeImagem);
                         }
                         else 
                         {
                             //se foram adicionadas fotografias
                             //adcicionar msg de erro
                             ModelState.AddModelError("", "Os ficheiros adicionados não são válidos");
-                            flagErro = false;
+                            flagErro = true;
 
                         }
                     }
                 }
-                if (flagErro == true)
+                if (flagErro == false)
                     try
                     {
+                        hoteis.ListaQuartos.Add(quartos);
                         _context.Add(hoteis);
-                        _context.Add(quartos);
-                        _context.Add(fotos);
+                        
+                        
+                        
                         await _context.SaveChangesAsync();
+
+                        for (int k = 0; k < listaFotos.Count; k++)
+                        {
+                            using var stream = new FileStream(listaNomesFotoFinal[k], FileMode.Create);
+                            await listaFotos[k].CopyToAsync(stream);
+                        }
+
                         return RedirectToAction(nameof(Index));
                     }
                     catch (Exception ex)
@@ -152,21 +170,20 @@ namespace Room4you.Controllers
             }
             return View(hoteis);
         }
-/*
+
         // GET: Hoteis/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return View("Index");
             }
 
             var hoteis = await _context.Hoteis.FindAsync(id);
             if (hoteis == null)
             {
-                return NotFound();
+                return View("Index");
             }
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", hoteis.QuartoFK);
             return View(hoteis);
         }
 
@@ -191,7 +208,8 @@ namespace Room4you.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HoteisExists(hoteis.Id))
+                    //verifica se existe algum hotel com este id
+                    if (_context.Hoteis.Any(o => o.Id == hoteis.Id))
                     {
                         return NotFound();
                     }
@@ -202,7 +220,6 @@ namespace Room4you.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", hoteis.QuartoFK);
             return View(hoteis);
         }
 
@@ -214,9 +231,8 @@ namespace Room4you.Controllers
                 return NotFound();
             }
 
-            var hoteis = await _context.Hoteis
-                .Include(h => h.Quarto)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var hoteis = await _context.Hoteis.Include(h => h.ListaQuartos).FirstOrDefaultAsync(m => m.Id == id);
+
             if (hoteis == null)
             {
                 return NotFound();
@@ -240,7 +256,7 @@ namespace Room4you.Controllers
         {
             return _context.Hoteis.Any(e => e.Id == id);
         }
-*/
+
     }
 
 }

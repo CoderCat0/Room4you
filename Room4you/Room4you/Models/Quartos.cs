@@ -34,6 +34,13 @@ namespace Room4you.Models
         [Required]
         public string Comodidades { get; set; }
 
+        /// <summary>
+        ///  Verifica se o quarto está ocupado
+        /// </summary>
+        [Required]
+        public bool Ocupado { get; set; }
+
+
         //****************************************
 
         // criação da FK que referencia o Hotel a quem o quarto pertence

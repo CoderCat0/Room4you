@@ -49,8 +49,8 @@ namespace Room4you.Models
         /// <summary>
         /// Classificação do Hotel
         /// </summary>
-        [RegularExpression("[0-9],[0-9]", ErrorMessage = "Introduza uma classificação no formato a,b")]
-        public double Categoria { get; set; }
+        [RegularExpression("[0-5]", ErrorMessage = "Introduza uma classificaçãon de 0 a 5")]
+        public int Categoria { get; set; }
 
 
         /// <summary>

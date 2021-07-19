@@ -23,7 +23,6 @@ namespace Room4you.Models
 
         // criação da FK que referencia as fotos ao Hotel a que pertencem
         [ForeignKey(nameof(Hotel))]
-        [Display(Name = "Hotel")]
         public int HotelFK { get; set; }
         public Hoteis Hotel { get; set; }
 
