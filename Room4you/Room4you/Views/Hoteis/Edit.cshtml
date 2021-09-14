@@ -44,9 +44,29 @@
                 <input asp-for="NumQuartos" class="form-control" />
                 <span asp-validation-for="NumQuartos" class="text-danger"></span>
             </div>
+
+            <hr />
+
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label asp-for="ListaFotografias" class="control-label"></label>
+                <input type="file" name="addedListaFotos" accept=".jpg,.jpeg,.png" multiple />
+                <span asp-validation-for="ListaFotografias" class="text-danger"></span>
             </div>
+
+            @foreach (var imagem in Model.ListaFotografias)
+            {
+                <input type="checkbox" name="checkBoxFotos" value="@imagem.Id" />
+                <img src="~/fotos/@imagem.Nome" alt="Fotografia do hotel @Model.Nome" width="100" /><br />
+            }
+
+
+
+            <hr />
+
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+
         </form>
     </div>
 </div>

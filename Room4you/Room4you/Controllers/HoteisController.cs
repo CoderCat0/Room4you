@@ -122,7 +122,7 @@ namespace Room4you.Controllers
                             // agora, consigo ter o nome final do ficheiro
                             nomeImagem = nomeImagem + extensao;
 
-                            // associar este ficheiro aos dados da Fotografia do cão
+                            // associar este ficheiro aos dados da Fotografia do hotel
                             foto.Nome = nomeImagem;
                             //foto.HotelFK = hoteis.Id;
                             hoteis.ListaFotografias.Add(foto);
@@ -133,7 +133,7 @@ namespace Room4you.Controllers
                         }
                         else 
                         {
-                            //se foram adicionadas fotografias
+                            //se foram adicionadas inválidos
                             //adcicionar msg de erro
                             ModelState.AddModelError("", "Os ficheiros adicionados não são válidos");
                             flagErro = true;
@@ -179,12 +179,16 @@ namespace Room4you.Controllers
                 return View("Index");
             }
 
-            var hoteis = await _context.Hoteis.FindAsync(id);
-            if (hoteis == null)
+            var hotel = await _context.Hoteis
+                .Include(h => h.ListaFotografias)
+                .Where(h => h.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (hotel == null)
             {
                 return View("Index");
             }
-            return View(hoteis);
+            return View(hotel);
         }
 
         // POST: Hoteis/Edit/5
@@ -192,35 +196,140 @@ namespace Room4you.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Pais,Cidade,Rua,Categoria,NumQuartos,QuartoFK")] Hoteis hoteis)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Pais,Cidade,Rua,Categoria,NumQuartos")] Hoteis hotel, int[] checkBoxFotos, List<IFormFile> addedListaFotos)
         {
-            if (id != hoteis.Id)
+            string nomeImagem = "";
+            bool flagErro = false;
+
+            if (id != hotel.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(hoteis);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    //verifica se existe algum hotel com este id
-                    if (_context.Hoteis.Any(o => o.Id == hoteis.Id))
+                /*----------------------ALGORITMO
+                 * se quero apagar imagens => quer dizer que checkBoxFotos contem ids de fotos
+                 *    vai ser necessario desassociar as fotgrafias do hotel 
+                 *    (ver ex que está no gitHub sobre editar M-N)
+                 *    (não esquecer que as fotografias devem ser apagadas do disco)
+                 *    
+                 * se há fotos para adicionar => quer dizer que o fileUpload contem fotos
+                 *    (fazer como no create) 
+                 *    
+                 * (não esquecer que no final do processo deve ficar pelo menos 1 foto associada so hotel)   
+                 */
+
+                //dados anteriormente associados ao hotel
+                var dadosHotel = await _context.Hoteis
+                                .Where(h => h.Id == id)
+                                .Include(h => h.ListaFotografias)
+                                .FirstOrDefaultAsync();
+
+                //lista dos IDs das fotografias associadas ao Hotel ANTES da edição
+                var oldListaFotos = dadosHotel.ListaFotografias
+                                                .Select(f => f.Id)
+                                                .ToList();
+
+                //avaliar se o user alterou a lista de fotos associada ao hotel
+                //adicionou -> lista de fotos a adicionar
+                var added = addedListaFotos;
+                //retiradas -> lista de fotos a remover
+                var removed = oldListaFotos.Except(checkBoxFotos.ToList());
+
+                List<string> listaNomesFotoFinal = new List<string>();
+
+                //se alguma foto foi adicionada ou removida
+                //é necessário alterar a lista de fotos
+                //associada ao Hotel
+                if (added.Any() || removed.Any()) {
+                    if (removed.Any())
                     {
-                        return NotFound();
+                        //retirar a foto
+                        foreach (int oldFoto in removed)
+                        {
+                            var fotoToRemove = dadosHotel.ListaFotografias.FirstOrDefault(f => f.Id == oldFoto);
+                            dadosHotel.ListaFotografias.Remove(fotoToRemove);
+                        }
                     }
-                    else
+                    if (added.Any()) {
+                        //adicionar foto
+                        foreach (IFormFile newFoto in added) {
+                            if (newFoto.ContentType == "image/jpeg" || newFoto.ContentType == "image/png")
+                            {
+                                Fotografias foto = new Fotografias();
+                                //defenir novo nome da fotografia
+                                Guid g;
+                                g = Guid.NewGuid();
+                                nomeImagem = hotel.Id + "_" + g.ToString();
+
+                                //determinar a extensão do nome da imagem
+                                string extensao = Path.GetExtension(newFoto.FileName).ToLower();
+
+                                // agora, consigo ter o nome final do ficheiro
+                                nomeImagem = nomeImagem + extensao;
+
+                                // associar este ficheiro aos dados da Fotografia do hotel
+                                foto.Nome = nomeImagem;
+                                hotel.ListaFotografias.Add(foto);
+                                string localizacaoFicheiro = _caminho.WebRootPath;
+                                nomeImagem = Path.Combine(localizacaoFicheiro, "fotos", nomeImagem);
+
+                                listaNomesFotoFinal.Add(nomeImagem);
+                            }
+                            else
+                            {
+                                //se foram adicionadas ficheiros inválidos
+                                //adcicionar msg de erro
+                                ModelState.AddModelError("", "Os ficheiros adicionados não são válidos");
+                                flagErro = true;
+
+                            }
+
+                            //var fotoToAdd = await _context.Fotografias.FirstOrDefaultAsync(f => f.Id == newFoto);
+                            //dadosHotel.ListaFotografias.Add(fotoToAdd);
+                        }
+                    }
+                }
+
+
+                if(flagErro == false) { 
+                    try
                     {
-                        throw;
+                        //atualizar com os novos dados provenientes da view
+                        dadosHotel.Nome = hotel.Nome;
+                        dadosHotel.Pais = hotel.Pais;
+                        dadosHotel.Rua = hotel.Rua;
+                        dadosHotel.NumQuartos = hotel.NumQuartos;
+
+                        _context.Update(dadosHotel);
+                        await _context.SaveChangesAsync();
+                        //a remocao so deve ser feita após esta fase
+
+                        for (int k = 0; k < addedListaFotos.Count; k++)
+                        {
+                            using var stream = new FileStream(listaNomesFotoFinal[k], FileMode.Create);
+                            await addedListaFotos[k].CopyToAsync(stream);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", ex.GetBaseException().ToString());
+                        //verifica se existe algum hotel com este id
+                        if (_context.Hoteis.Any(o => o.Id == hotel.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(hoteis);
+            return View(hotel);
         }
 
         // GET: Hoteis/Delete/5
