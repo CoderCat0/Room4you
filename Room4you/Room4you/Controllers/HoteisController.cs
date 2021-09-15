@@ -200,7 +200,6 @@ namespace Room4you.Controllers
             {
                 return View("Index");
             }
-
             return View(hotel);
         }
 
