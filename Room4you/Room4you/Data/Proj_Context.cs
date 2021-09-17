@@ -67,6 +67,7 @@ namespace Room4you.Data
         public DbSet<Hoteis> Hoteis { get; set; }
         public DbSet<Quartos> Quartos { get; set; }
         public DbSet<QuartosCompra> QuartosCompra { get; set; }
+        public DbSet<Room4you.Models.ReservaQuartosViewModel> ReservaQuartosViewModel { get; set; }
 
     }
 

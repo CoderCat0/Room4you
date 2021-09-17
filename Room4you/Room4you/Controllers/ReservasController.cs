@@ -15,7 +15,7 @@ using Room4you.Models;
 namespace Room4you.Controllers
 {
     [Authorize]
-    public class QuartosComprasController : Controller
+    public class ReservasController : Controller
     {
         /// <summary>
         /// este atributo representa a base de dados do projeto
@@ -32,21 +32,91 @@ namespace Room4you.Controllers
         /// </summary>
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public QuartosComprasController(Proj_Context context, IWebHostEnvironment caminho, UserManager<ApplicationUser> userManager)
+        public ReservasController(Proj_Context context, IWebHostEnvironment caminho, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _caminho = caminho;
             _userManager = userManager;
         }
 
-        // GET: QuartosCompras
+
+        // GET: Reservas/Create
+        public IActionResult Reserva(int? id)
+        {
+            ViewData["Hotel"] = new SelectList(_context.Hoteis, "Id", "Nome", id);
+            return View();
+        }
+
+        // POST: Reservas/Create
+        [HttpPost]
+        public IActionResult Reserva(ReservaQuartosViewModel pedidoReserva)
+        {
+            //lista de todos quartos do hotel especificado na reserva
+            var quartosBD = _context.Quartos.Where(quartos => quartos.Id == pedidoReserva.Hotel).ToList<Quartos>();
+
+            //lista de todos os quartos já reservados do hotel especificado na reserva
+            List<QuartosCompra> listaQuartosBD = _context.QuartosCompra.ToList<QuartosCompra>();
+
+            //Set de IDs de todos os quartos do hotel especificado na reserva
+            HashSet<int> todosQuartos = new HashSet<int>();
+
+            // Procurar se existe quarttos disponíveis
+            if (pedidoReserva.Hotel >= 1)
+            {
+
+                foreach (Quartos q in quartosBD)
+                {
+                    todosQuartos.Add(q.Id);
+                }
+
+                //Set de quartos disponiveis para reservar do hotel especificado pelo user
+                HashSet<int> quartosDisponiveis = new HashSet<int>(todosQuartos);
+
+                //Set de IDs de quartos inválidos do hotel especificado na reserva
+                HashSet<int> quartosInvalidos = new HashSet<int>();
+
+                foreach (QuartosCompra q in listaQuartosBD)
+                {
+                    if (!(quartosInvalidos.Contains(q.IdQuartoFK)))
+                    {
+                        DateTime dataNovaEntrada = pedidoReserva.DataInicio;
+                        DateTime dataNovaSaida = pedidoReserva.DataFim;
+
+                        if (!((dataNovaEntrada > q.DataEntrada && dataNovaEntrada > q.DataSaida) || (dataNovaSaida < q.DataEntrada && dataNovaSaida < q.DataSaida)))
+                        {
+                            quartosInvalidos.Add(q.IdQuartoFK);
+                        }
+                    }
+                }
+                quartosDisponiveis.ExceptWith(quartosInvalidos);
+
+                // depois de encontrar os quartos disponíveis, vou invocar a View com esses dados
+                return View("MostraQuartosDisponiveis");
+
+            }
+            
+            //if (ModelState.IsValid)
+            //{
+            //    if (quartosDisponiveis.Count() < 1)
+            //}
+
+
+            // se chego aqui, é pq algo correu mal.
+            // voltamos a mostrar a View no ercã do cliente
+            ViewData["Hotel"] = new SelectList(_context.Hoteis, "Id", "Nome", pedidoReserva.Hotel);
+            return View();
+        }
+
+
+
+        // GET: Reservas
         public async Task<IActionResult> Index()
         {
             var proj_Context = await _context.QuartosCompra.Include(q => q.IdCompra).Include(q => q.IdQuarto).ToListAsync();
             return View(proj_Context);
         }
 
-        // GET: QuartosCompras/Details/5
+        // GET: Reservas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -66,7 +136,7 @@ namespace Room4you.Controllers
             return View(quartosCompra);
         }
 
-        // GET: QuartosCompras/Create
+        // GET: Reservas/Create
         public IActionResult Create()
         {
             ViewData["IdCompraFK"] = new SelectList(_context.Compras, "Id", "Id");
@@ -74,7 +144,7 @@ namespace Room4you.Controllers
             return View();
         }
 
-        // POST: QuartosCompras/Create
+        // POST: Reservas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -83,10 +153,11 @@ namespace Room4you.Controllers
         {
             //flag erro
             bool flagErro = false;
-            int contaQuartos = 0;
 
+            //quartos já reservados
             List<QuartosCompra> listaQuartosBD = _context.QuartosCompra.ToList<QuartosCompra>();
 
+            //lista de quartos
             List<Quartos> quartosBD = _context.Quartos.ToList<Quartos>();
 
             HashSet<int> quartosInvalidos = new HashSet<int>();
@@ -142,7 +213,7 @@ namespace Room4you.Controllers
             return View(quartosCompra);
         }
 
-        // GET: QuartosCompras/Edit/5
+        // GET: Reservas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -160,7 +231,7 @@ namespace Room4you.Controllers
             return View(quartosCompra);
         }
 
-        // POST: QuartosCompras/Edit/5
+        // POST: Reservas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -197,7 +268,7 @@ namespace Room4you.Controllers
             return View(quartosCompra);
         }
 
-        // GET: QuartosCompras/Delete/5
+        // GET: Reservas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -217,7 +288,7 @@ namespace Room4you.Controllers
             return View(quartosCompra);
         }
 
-        // POST: QuartosCompras/Delete/5
+        // POST: Reservas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -79,7 +79,7 @@ namespace Room4you.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nome,Pais,Cidade,Rua,Categoria,NumQuartos")] Hoteis hoteis, List<IFormFile> listaFotos, string area, string info, int numQuartos)
+        public async Task<IActionResult> Create([Bind("Nome,Pais,Cidade,Rua,Categoria,NumQuartos, Preco")] Hoteis hoteis, List<IFormFile> listaFotos, string area, string info, int numQuartos)
         {
             //flag erro
             bool flagErro = false;

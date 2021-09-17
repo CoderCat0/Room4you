@@ -60,7 +60,7 @@ namespace Room4you.Models
         public int NumQuartos { get; set; }
 
         /// <summary>
-        /// Preço de Compra
+        /// Preço do aluguer de um Quarto (por dia) num Hotel
         /// </summary>
         public int Preco { get; set; }
 
