@@ -59,6 +59,13 @@ namespace Room4you.Models
         [Display(Name = "Número de Quartos")]
         public int NumQuartos { get; set; }
 
+        /// <summary>
+        /// Preço de Compra
+        /// </summary>
+        public int Preco { get; set; }
+
+
+
         /*---------------------------------------------*/
 
         /// <summary>

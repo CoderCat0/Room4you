@@ -39,16 +39,21 @@ namespace Room4you.Data
 
             // insert DB seed
 
-            // dados para definição dos 'Roles'
+            //dados para definição dos 'Roles'
             modelBuilder.Entity<IdentityRole>().HasData(
                new IdentityRole { Id = "c", Name = "Cliente", NormalizedName = "CLIENTE" },
                new IdentityRole { Id = "a", Name = "Administrador", NormalizedName = "ADMINISTRADOR" }
                );
 
-            modelBuilder.Entity<Hoteis>().HasData(
-                new Hoteis { Id = 1 , Nome = "Hotel Fantástico" , Pais = "Portugal", Cidade = "Lisboa", Categoria = 5, Rua = "Qualquer coisa", NumQuartos = 1 }
-            );
+            //modelBuilder.Entity<Hoteis>().HasData(
+            //    new Hoteis { Id = 1, Nome = "Hotel UM", Pais = "Portugal", Cidade = "Lisboa", Categoria = 5, Rua = "Qualquer coisa", NumQuartos = 3 },
+            //    new Hoteis { Id = 2, Nome = "Hotel Dois", Pais = "Portugal", Cidade = "Lisboa", Categoria = 5, Rua = "Qualquer coisa", NumQuartos = 5 },
+            //    new Hoteis { Id = 3, Nome = "Hotel tres", Pais = "Portugal", Cidade = "Lisboa", Categoria = 5, Rua = "Qualquer coisa", NumQuartos = 4 }
+            //);
 
+            //modelBuilder.Entity<Compras>().HasData(
+            //    new Compras { Id = 1, Data = '20210919 10:30:00 AM', IdCliente = 1}
+            //);
 
             //modelBuilder.Entity<Fotografias>().HasData(
             //    new Fotografias { Id = 1, Nome = "h1.jpg", HotelFK = 1 }

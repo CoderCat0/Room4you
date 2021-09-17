@@ -10,15 +10,15 @@ using Room4you.Data;
 namespace Room4you.Migrations
 {
     [DbContext(typeof(Proj_Context))]
-    [Migration("20210719185022_Initial")]
-    partial class Initial
+    [Migration("20210917092445_Roles")]
+    partial class Roles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.8")
+                .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -51,14 +51,14 @@ namespace Room4you.Migrations
                         new
                         {
                             Id = "c",
-                            ConcurrencyStamp = "ef581e79-983f-4dac-99e5-c42775228021",
+                            ConcurrencyStamp = "6938cde3-1de2-4b54-9457-460097bc3a6b",
                             Name = "Cliente",
                             NormalizedName = "CLIENTE"
                         },
                         new
                         {
                             Id = "a",
-                            ConcurrencyStamp = "6553d688-e0e9-40bc-800e-b2b0141efe91",
+                            ConcurrencyStamp = "453e1726-31b5-4f8e-85d0-e047b9fc6c35",
                             Name = "Administrador",
                             NormalizedName = "ADMINISTRADOR"
                         });
@@ -254,11 +254,11 @@ namespace Room4you.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Nacionalidade")
+                    b.Property<string>("NIF")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NIF")
+                    b.Property<string>("Nacionalidade")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -341,24 +341,15 @@ namespace Room4you.Migrations
                     b.Property<string>("Pais")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Preco")
+                        .HasColumnType("int");
+
                     b.Property<string>("Rua")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Hoteis");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Categoria = 5,
-                            Cidade = "Lisboa",
-                            Nome = "Hotel Fantástico",
-                            NumQuartos = 1,
-                            Pais = "Portugal",
-                            Rua = "Qualquer coisa"
-                        });
                 });
 
             modelBuilder.Entity("Room4you.Models.Quartos", b =>
@@ -378,9 +369,6 @@ namespace Room4you.Migrations
 
                     b.Property<int>("HotelFK")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Ocupado")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -409,9 +397,6 @@ namespace Room4you.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("NumPessoas")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Preco")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

@@ -28,19 +28,10 @@
                 <input asp-for="NumPessoas" class="form-control" />
                 <span asp-validation-for="NumPessoas" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Preco" class="control-label"></label>
-                <input asp-for="Preco" value = "@ViewBag.Message" class="form-control"  readonly/>
-                <span asp-validation-for="Preco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdQuartoFK" class="control-label"></label>
-                <select asp-for="IdQuartoFK" class ="form-control" asp-items="ViewBag.IdQuartoFK"></select>
-            </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="IdCompraFK" class="control-label"></label>
                 <select asp-for="IdCompraFK" class ="form-control" asp-items="ViewBag.IdCompraFK"></select>
-            </div>
+            </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

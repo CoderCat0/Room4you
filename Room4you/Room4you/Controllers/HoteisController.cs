@@ -94,7 +94,6 @@ namespace Room4you.Controllers
                 {
                     //declarar variáveis
                     Quartos quartos = new Quartos();
-                    quartos.Ocupado = false;
                     quartos.Hotel = hoteis;
                     quartos.Comodidades = info;
                     quartos.Area = area;
@@ -158,8 +157,6 @@ namespace Room4you.Controllers
                         }
 
                         _context.Add(hoteis);
-
-
 
                         await _context.SaveChangesAsync();
 
@@ -330,7 +327,11 @@ namespace Room4you.Controllers
                         foreach (string nomeFoto in listaNomesFotoApagar)
                         {
                             //File.Delete(Path.Combine(rootFolder, nomeFoto));
-                            
+                            var path = Path.Combine(_caminho.WebRootPath, "fotos", nomeFoto);
+                            if (System.IO.File.Exists(path))
+                            {
+                                System.IO.File.Delete(path);
+                            }
                         }
 
                         for (int k = 0; k < addedListaFotos.Count; k++)

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Room4you.Data;
 
 namespace Room4you.Migrations
 {
     [DbContext(typeof(Proj_Context))]
-    partial class Proj_ContextModelSnapshot : ModelSnapshot
+    [Migration("20210917092305_Inicio")]
+    partial class Inicio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,22 +46,6 @@ namespace Room4you.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "c",
-                            ConcurrencyStamp = "6938cde3-1de2-4b54-9457-460097bc3a6b",
-                            Name = "Cliente",
-                            NormalizedName = "CLIENTE"
-                        },
-                        new
-                        {
-                            Id = "a",
-                            ConcurrencyStamp = "453e1726-31b5-4f8e-85d0-e047b9fc6c35",
-                            Name = "Administrador",
-                            NormalizedName = "ADMINISTRADOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

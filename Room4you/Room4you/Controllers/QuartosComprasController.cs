@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,7 @@ using Room4you.Models;
 
 namespace Room4you.Controllers
 {
+    [Authorize]
     public class QuartosComprasController : Controller
     {
         /// <summary>
@@ -83,43 +85,53 @@ namespace Room4you.Controllers
             bool flagErro = false;
             int contaQuartos = 0;
 
-            Random r = new Random();
-            int preco = r.Next(100, 150);
-            ViewBag.Message = preco;
+            List<QuartosCompra> listaQuartosBD = _context.QuartosCompra.ToList<QuartosCompra>();
+
+            List<Quartos> quartosBD = _context.Quartos.ToList<Quartos>();
+
+            HashSet<int> quartosInvalidos = new HashSet<int>();
+
+            HashSet<int> todosQuartos = new HashSet<int>();
+
+            foreach (Quartos q in quartosBD)
+            {
+                todosQuartos.Add(q.Id);
+            }
+
+            foreach (QuartosCompra q in listaQuartosBD)
+            {
+                if (!(quartosInvalidos.Contains(q.IdQuartoFK)))
+                {
+                    DateTime dataNovaEntrada = quartosCompra.DataEntrada;
+                    DateTime dataNovaSaida = quartosCompra.DataSaida;
+
+                    if (!((dataNovaEntrada > q.DataEntrada && dataNovaEntrada > q.DataSaida) || (dataNovaSaida < q.DataEntrada && dataNovaSaida < q.DataSaida)))
+                    {
+                        quartosInvalidos.Add(q.IdQuartoFK);
+                    }
+                }
+            }
+
+            HashSet<int> quartosDisponiveis = new HashSet<int>(todosQuartos);
+            quartosDisponiveis.ExceptWith(quartosInvalidos);
 
 
             if (ModelState.IsValid)
             {
-                Quartos disponivel = null;
 
-                foreach (Quartos quarto in hotel.ListaQuartos)
+                if (quartosDisponiveis.Count() < 1)
                 {
-                    if (quarto.Ocupado == false)
-                    {
-                        if(disponivel == null)
-                        {
-                            disponivel = quarto;
-                        }
-                        contaQuartos++;
-                    }
-                }
-
-
-                if(contaQuartos < 1)
-                {
-                    ModelState.AddModelError("", "Não estão quartos desocupados para o hotel escolhido");
+                    ModelState.AddModelError("", "Não estão quartos desocupados para a data escolhida");
                 }
                 else
                 {
-                    disponivel.Ocupado = true;
                     QuartosCompra quartoReservado = new QuartosCompra();
-                    quartoReservado.IdQuartoFK = disponivel.Id;
+                    quartoReservado.IdQuartoFK = quartosDisponiveis.First();
                     quartoReservado.IdCompraFK = quartosCompra.Id;
                     quartoReservado.DataEntrada = quartosCompra.DataEntrada;
                     quartoReservado.DataSaida = quartosCompra.DataSaida;
                     quartoReservado.NumPessoas = quartosCompra.NumPessoas;
-                    quartoReservado.Preco = preco;
-                    
+
                 }
                 _context.Add(quartosCompra);
                 await _context.SaveChangesAsync();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Room4you.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Inicio : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -77,7 +77,8 @@ namespace Room4you.Migrations
                     Cidade = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rua = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Categoria = table.Column<int>(type: "int", nullable: false),
-                    NumQuartos = table.Column<int>(type: "int", nullable: false)
+                    NumQuartos = table.Column<int>(type: "int", nullable: false),
+                    Preco = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -238,7 +239,6 @@ namespace Room4you.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comodidades = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Ocupado = table.Column<bool>(type: "bit", nullable: false),
                     HotelFK = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -261,7 +261,6 @@ namespace Room4you.Migrations
                     DataEntrada = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataSaida = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NumPessoas = table.Column<int>(type: "int", nullable: false),
-                    Preco = table.Column<int>(type: "int", nullable: false),
                     IdQuartoFK = table.Column<int>(type: "int", nullable: false),
                     IdCompraFK = table.Column<int>(type: "int", nullable: false)
                 },
@@ -281,21 +280,6 @@ namespace Room4you.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "c", "ef581e79-983f-4dac-99e5-c42775228021", "Cliente", "CLIENTE" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "a", "6553d688-e0e9-40bc-800e-b2b0141efe91", "Administrador", "ADMINISTRADOR" });
-
-            migrationBuilder.InsertData(
-                table: "Hoteis",
-                columns: new[] { "Id", "Categoria", "Cidade", "Nome", "NumQuartos", "Pais", "Rua" },
-                values: new object[] { 1, 5, "Lisboa", "Hotel Fantástico", 1, "Portugal", "Qualquer coisa" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

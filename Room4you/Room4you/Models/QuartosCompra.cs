@@ -30,11 +30,6 @@ namespace Room4you.Models
         /// </summary>
         public int NumPessoas { get; set; }
 
-        /// <summary>
-        /// Preço de Compra
-        /// </summary>
-        public int Preco { get; set; }
-
         /*---------------------------------------------*/
 
         /// <summary>
