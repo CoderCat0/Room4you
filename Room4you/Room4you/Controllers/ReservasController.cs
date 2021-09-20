@@ -40,29 +40,27 @@ namespace Room4you.Controllers
         }
 
 
-        // GET: Reservas/Create
+        // GET: Reservas/Reserva
         public IActionResult Reserva(int? id)
         {
             ViewData["Hotel"] = new SelectList(_context.Hoteis, "Id", "Nome", id);
             return View();
         }
 
-        // POST: Reservas/Create
+        // POST: Reservas/Reserva
         [HttpPost]
-        public IActionResult Reserva(ReservaQuartosViewModel pedidoReserva)
+        public async Task<IActionResult> Reserva(ReservaQuartosViewModel pedidoReserva)
         {
-            //lista de todos quartos do hotel especificado na reserva
-            var quartosBD = _context.Quartos.Where(quartos => quartos.Id == pedidoReserva.Hotel).ToList<Quartos>();
-
-            //lista de todos os quartos já reservados do hotel especificado na reserva
-            List<QuartosCompra> listaQuartosBD = _context.QuartosCompra.ToList<QuartosCompra>();
-
-            //Set de IDs de todos os quartos do hotel especificado na reserva
-            HashSet<int> todosQuartos = new HashSet<int>();
-
-            // Procurar se existe quarttos disponíveis
-            if (pedidoReserva.Hotel >= 1)
+            if (ModelState.IsValid)
             {
+                //lista de todos quartos do hotel especificado na reserva
+                var quartosBD = _context.Quartos.Where(quartos => quartos.HotelFK == pedidoReserva.Hotel).ToList<Quartos>();
+
+                //lista de todos os quartos já reservados do hotel especificado na reserva
+                List<QuartosCompra> listaQuartosBD = _context.QuartosCompra.ToList<QuartosCompra>();
+
+                //Set de IDs de todos os quartos do hotel especificado na reserva
+                HashSet<int> todosQuartos = new HashSet<int>();
 
                 foreach (Quartos q in quartosBD)
                 {
@@ -75,31 +73,45 @@ namespace Room4you.Controllers
                 //Set de IDs de quartos inválidos do hotel especificado na reserva
                 HashSet<int> quartosInvalidos = new HashSet<int>();
 
-                foreach (QuartosCompra q in listaQuartosBD)
+                // Procurar se existe quarttos disponíveis
+                if (pedidoReserva.Hotel >= 1)
                 {
-                    if (!(quartosInvalidos.Contains(q.IdQuartoFK)))
-                    {
-                        DateTime dataNovaEntrada = pedidoReserva.DataInicio;
-                        DateTime dataNovaSaida = pedidoReserva.DataFim;
 
-                        if (!((dataNovaEntrada > q.DataEntrada && dataNovaEntrada > q.DataSaida) || (dataNovaSaida < q.DataEntrada && dataNovaSaida < q.DataSaida)))
+                    foreach (QuartosCompra q in listaQuartosBD)
+                    {
+                        if (!(quartosInvalidos.Contains(q.IdQuartoFK)))
                         {
-                            quartosInvalidos.Add(q.IdQuartoFK);
+                            DateTime dataNovaEntrada = pedidoReserva.DataInicio;
+                            DateTime dataNovaSaida = pedidoReserva.DataFim;
+
+                            //algoritmo que avalia se as datas especificadas no pedido de reserva coincidem com datas de reservas prévias nos quartos
+                            if (!((dataNovaEntrada > q.DataEntrada && dataNovaEntrada > q.DataSaida) || (dataNovaSaida < q.DataEntrada && dataNovaSaida < q.DataSaida)))
+                            {
+                                //se coincide o id do quarto é adicionado ao Set dos quartos Inválidos
+                                quartosInvalidos.Add(q.IdQuartoFK);
+                            }
                         }
                     }
+                    quartosDisponiveis.ExceptWith(quartosInvalidos);
                 }
-                quartosDisponiveis.ExceptWith(quartosInvalidos);
 
-                // depois de encontrar os quartos disponíveis, vou invocar a View com esses dados
-                return View("MostraQuartosDisponiveis");
 
+                if (quartosDisponiveis.Count() < 1)
+                {
+                    ModelState.AddModelError("", "Não estão quartos desocupados para a data escolhida");
+                }
+                else
+                {
+                    var quartos = await _context.Quartos
+                        .Include(q => q.Hotel)
+                        .Where(q => quartosDisponiveis.Contains(q.Id))
+                        .ToListAsync();
+
+                    // depois de encontrar os quartos disponíveis, vou invocar a View com esses dados
+                    return View("MostraQuartosDisponiveis", quartos);
+
+                }
             }
-            
-            //if (ModelState.IsValid)
-            //{
-            //    if (quartosDisponiveis.Count() < 1)
-            //}
-
 
             // se chego aqui, é pq algo correu mal.
             // voltamos a mostrar a View no ercã do cliente
@@ -107,6 +119,19 @@ namespace Room4you.Controllers
             return View();
         }
 
+        // GET: Reservas/Create
+        public IActionResult ProcessaReserva(int? id)
+        {
+            return View(); //não sei o que por aqui
+        }
+
+        // POST: Reservas/Create
+        [HttpPost]
+        public async Task<IActionResult> ProcessaReserva()
+        {
+
+            return View();
+        }
 
 
         // GET: Reservas

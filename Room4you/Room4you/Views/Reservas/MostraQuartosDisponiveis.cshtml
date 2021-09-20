@@ -1,7 +1,65 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<Room4you.Models.Quartos>
+@*For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860*@
 @{
+    ViewData["Title"] = "QuartosDisponiveis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
-<h4> quartos disponíveis</h4>
+<h3>Quartos disponíveis de acordo com as suas específicações</h3>
+
+<hr />
+
+<h5>Selecione os quartos que deseja reservar e de seguida selecione o número de pessoas que vão ocupar cada quarto</h5>
+
+<form asp-action="ProcessaReserva" method="post" enctype="multipart/form-data">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Reservar
+                </th>
+
+                <th>
+                    Número do Quarto
+                </th>
+
+                <th>
+                    Nome do Hotel
+                </th>
+
+                <th>
+                    Número de pessoas
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="checkBoxQuartos" value="" />
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Hotel.Nome)
+                    </td>
+
+                    <td>
+                        <select name="">
+                            <option value="0">---Selecione o número de pessoas---</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</form>
