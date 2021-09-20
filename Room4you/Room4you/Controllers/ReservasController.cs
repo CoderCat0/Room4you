@@ -73,17 +73,16 @@ namespace Room4you.Controllers
                 //Set de IDs de quartos inválidos do hotel especificado na reserva
                 HashSet<int> quartosInvalidos = new HashSet<int>();
 
+                DateTime dataNovaEntrada = pedidoReserva.DataInicio;
+                DateTime dataNovaSaida = pedidoReserva.DataFim;
+
                 // Procurar se existe quarttos disponíveis
                 if (pedidoReserva.Hotel >= 1)
                 {
-
                     foreach (QuartosCompra q in listaQuartosBD)
                     {
                         if (!(quartosInvalidos.Contains(q.IdQuartoFK)))
                         {
-                            DateTime dataNovaEntrada = pedidoReserva.DataInicio;
-                            DateTime dataNovaSaida = pedidoReserva.DataFim;
-
                             //algoritmo que avalia se as datas especificadas no pedido de reserva coincidem com datas de reservas prévias nos quartos
                             if (!((dataNovaEntrada > q.DataEntrada && dataNovaEntrada > q.DataSaida) || (dataNovaSaida < q.DataEntrada && dataNovaSaida < q.DataSaida)))
                             {
@@ -102,13 +101,21 @@ namespace Room4you.Controllers
                 }
                 else
                 {
+                    //retorna os 
                     var quartos = await _context.Quartos
                         .Include(q => q.Hotel)
                         .Where(q => quartosDisponiveis.Contains(q.Id))
                         .ToListAsync();
 
+                    var dados = new Tuple<List<Quartos>, DateTime, DateTime, int>(quartos, dataNovaEntrada, dataNovaSaida, 1);
+
+                    //DadosReserva dadosReserva = new DadosReserva();
+                    //dadosReserva.Quartos = quartos;
+                    //dadosReserva.DataInicio = dataNovaEntrada;
+                    //dadosReserva.DataFim = dataNovaSaida;
+                    //dadosReserva.IdCliente = 1;
                     // depois de encontrar os quartos disponíveis, vou invocar a View com esses dados
-                    return View("MostraQuartosDisponiveis", quartos);
+                    return View("MostraQuartosDisponiveis", dados);
 
                 }
             }
@@ -119,20 +126,38 @@ namespace Room4you.Controllers
             return View();
         }
 
-        // GET: Reservas/Create
-        public IActionResult ProcessaReserva(int? id)
+        // GET: Reservas/ProcessaReserva
+        [HttpGet]
+        public ActionResult ProcessaReserva()
         {
-            return View(); //não sei o que por aqui
+            return View("Index");
         }
 
-        // POST: Reservas/Create
+        // POST: Reservas/ProcessaReserva
         [HttpPost]
-        public async Task<IActionResult> ProcessaReserva()
+        public async Task<ActionResult> ProcessaReservaAsync(string[] checkBoxQuartos, string[] numeroPessoas, DateTime dataInicio, DateTime dataFim, int idCliente)
         {
+            numeroPessoas = numeroPessoas.Where(val => val != "0").ToArray();
 
-            return View();
+            Compras compra = new Compras();
+            compra.Data = DateTime.Now;
+            compra.IdCliente = await _context.Clientes.FindAsync(idCliente);
+            _context.Add(compra);
+
+            for(int i = 0; i < checkBoxQuartos.Length; i++)
+            {
+                QuartosCompra quartosCompra = new QuartosCompra();
+                quartosCompra.DataEntrada = dataInicio;
+                quartosCompra.DataSaida = dataFim;
+                quartosCompra.IdCompra = compra;
+                quartosCompra.IdQuartoFK = Int32.Parse(checkBoxQuartos[i]);
+                quartosCompra.NumPessoas = Int32.Parse(numeroPessoas[i]);
+                _context.Add(quartosCompra);
+            }
+            await _context.SaveChangesAsync();
+            return View("ReservaConcluida");
+
         }
-
 
         // GET: Reservas
         public async Task<IActionResult> Index()

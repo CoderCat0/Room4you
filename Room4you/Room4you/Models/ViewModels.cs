@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Room4you.Models
@@ -30,7 +31,20 @@ namespace Room4you.Models
 
     }
 
+    public class DadosReserva
+    {
+        //id do cliente que faz a reserva
+        public int IdCliente { get; set; }
 
+        //data de inicio da reserva
+        public DateTime DataInicio { get; set; }
+
+        //data de fim da reserva
+        public DateTime DataFim { get; set; }
+
+        //lista dos quartos associados à reserva
+        public List<Quartos> Quartos { get; set; }
+    }
 
 
     public class ViewModels
